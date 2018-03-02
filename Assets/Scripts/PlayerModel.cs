@@ -1,6 +1,6 @@
 ﻿public class PlayerModel
 {
-    public bool isPlayer0; //that or an int *shrug emoji*
+    public bool isBottomPlayer0; //there are only 2 players
     public int score;
     public bool fingerIsTouching;
 }
