@@ -16,6 +16,6 @@ public class PongeApplication : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+        Debug.Log("LET'S KICK IT");
 	}
 }

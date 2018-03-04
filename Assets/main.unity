@@ -204,7 +204,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 990a3a049819199498c47b1d0ddfcc2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BallPrefab: {fileID: 0}
+  BallPrefab: {fileID: 1238324623045218, guid: 6fc3056ec1961aa45becd27cf2e4067d, type: 2}
   totalBalls: 0
   maxBalls: 0
   HalfwayYPixel: 0
@@ -302,10 +302,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb050f45eedcfa14a89908c28a58500e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ball: {fileID: 0}
+  ball: {fileID: 1100344980}
   player0: {fileID: 945098348}
   player1: {fileID: 675607938}
-  mainCamera: {fileID: 0}
+  mainCamera: {fileID: 940516787}
 --- !u!1001 &675607936
 Prefab:
   m_ObjectHideFlags: 0
@@ -552,6 +552,12 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6fc3056ec1961aa45becd27cf2e4067d, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &1100344980 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114922719164637254, guid: 6fc3056ec1961aa45becd27cf2e4067d,
+    type: 2}
+  m_PrefabInternal: {fileID: 1100344979}
+  m_Script: {fileID: 11500000, guid: 771e1e60327eac648ad8647ff2f83742, type: 3}
 --- !u!1001 &1279526139
 Prefab:
   m_ObjectHideFlags: 0

@@ -12,7 +12,7 @@ public class PlayerView : PongeElement
 
     void OnMouseDrag()
     {
-        app.controller.OnPlayerDrag();
+        app.controller.OnPlayerDrag(model.isBottomPlayer0);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
