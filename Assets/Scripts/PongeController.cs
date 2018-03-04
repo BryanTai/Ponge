@@ -33,8 +33,8 @@ public class PongeController : PongeElement
             playerToMove = app.view.player1;
         }
 
-        float playerYPixels = app.view.camera.WorldToScreenPoint(playerToMove.transform.position).y;
-        Vector3 newPlayerWorldVector = app.view.camera.ScreenToWorldPoint(new Vector3(touchXPixels, playerYPixels));
+        float playerYPixels = app.view.mainCamera.WorldToScreenPoint(playerToMove.transform.position).y;
+        Vector3 newPlayerWorldVector = app.view.mainCamera.ScreenToWorldPoint(new Vector3(touchXPixels, playerYPixels));
 
         playerToMove.transform.position = newPlayerWorldVector;
     }
