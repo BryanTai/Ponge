@@ -20,6 +20,7 @@ public class TestController : MonoBehaviour {
         Player0TouchId = -1;
         Player1TouchId = -1;
         HalfwayYPixel = Screen.height / 2;
+        Debug.Log("HalfwayYPixel: " + HalfwayYPixel);
     }
 	
 	// Update is called once per frame
@@ -54,16 +55,19 @@ public class TestController : MonoBehaviour {
             {
                 if (newTouch.phase == TouchPhase.Began)
                 {
+                    Debug.Log("NEW TOUCH DETECTED : TouchPosition " + newTouch.position.y);
+
                     if(newTouch.position.y < HalfwayYPixel)
                     {
                         Player0TouchId = newTouch.fingerId;
-                        //Move paddle to finger
                         MovePlayerToXPixel(Player0View, newTouch.position.x);
+                        Debug.Log("Touched Player 0");
                     }
                     else
                     {
                         Player1TouchId = newTouch.fingerId;
                         MovePlayerToXPixel(Player1View, newTouch.position.x);
+                        Debug.Log("Touched Player 1");
                     }
 
 
