@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class TestController : MonoBehaviour {
 
-    public int Player0TouchId = -1;
-    public int Player1TouchId = -1;
+    public int Player0TouchId;
+    public int Player1TouchId;
 
-    public TestView Player0;
-    public TestView Player1;
+    public TestView Player0View;
+    public TestView Player1View;
 
     public Camera mainCamera;
 
@@ -17,33 +17,40 @@ public class TestController : MonoBehaviour {
     // Use this for initialization
     void Start () {
         mainCamera = GetComponent<Camera>();
+        Player0TouchId = -1;
+        Player1TouchId = -1;
         HalfwayYPixel = Screen.height / 2;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        Touch player0Touch;
-        Touch player1Touch;
-
         for(int i = 0; i < Input.touchCount; i++)
         {
             Touch newTouch = Input.GetTouch(i);
             int newId = newTouch.fingerId;
 
-            if (newId == Player0TouchId || newId == Player1TouchId)
+            if (newId == Player0TouchId)
             {
-                TestView playerToMove;
-                if (newId == Player0TouchId)
+                if(newTouch.phase == TouchPhase.Ended)
                 {
-                    playerToMove = Player0;
+                    Player0TouchId = -1;
                 }
                 else
                 {
-                    playerToMove = Player1;
-                }
-                MovePlayerToXPixel(playerToMove, newTouch.position.x);
+                    MovePlayerToXPixel(Player0View, newTouch.position.x);
+                } 
             }
-            else //Touch matches neither saved paddle IDs, check if it's a new one or a random touch
+            else if (newId == Player1TouchId)
+            {
+                if (newTouch.phase == TouchPhase.Ended)
+                {
+                    Player1TouchId = -1;
+                }else
+                {
+                    MovePlayerToXPixel(Player1View, newTouch.position.x);
+                }
+            }
+            else //Touch matches neither saved paddle IDs, check if it's a new one
             {
                 if (newTouch.phase == TouchPhase.Began)
                 {
@@ -51,12 +58,12 @@ public class TestController : MonoBehaviour {
                     {
                         Player0TouchId = newTouch.fingerId;
                         //Move paddle to finger
-                        MovePlayerToXPixel(Player0, newTouch.position.x);
+                        MovePlayerToXPixel(Player0View, newTouch.position.x);
                     }
                     else
                     {
                         Player1TouchId = newTouch.fingerId;
-                        MovePlayerToXPixel(Player1, newTouch.position.x);
+                        MovePlayerToXPixel(Player1View, newTouch.position.x);
                     }
 
 

@@ -208,8 +208,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player0TouchId: 0
   Player1TouchId: 0
-  Player0: {fileID: 1246276926}
-  Player1: {fileID: 2092640454}
+  Player0View: {fileID: 1246276926}
+  Player1View: {fileID: 2092640454}
+  mainCamera: {fileID: 0}
+  HalfwayYPixel: 0
 --- !u!1001 &758699637
 Prefab:
   m_ObjectHideFlags: 0
