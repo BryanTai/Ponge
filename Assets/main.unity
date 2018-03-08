@@ -204,10 +204,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 990a3a049819199498c47b1d0ddfcc2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HalfwayYPixel: 0
   BallPrefab: {fileID: 1238324623045218, guid: 6fc3056ec1961aa45becd27cf2e4067d, type: 2}
   totalBalls: 0
   maxBalls: 0
-  HalfwayYPixel: 0
+  balls: []
 --- !u!1 &48956218
 GameObject:
   m_ObjectHideFlags: 0
@@ -408,7 +409,7 @@ Camera:
   m_GameObject: {fileID: 940516784}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -747,7 +748,7 @@ Prefab:
     - target: {fileID: 61586854911306794, guid: 01a63b030b4c76e44b7315f36dc6d8dc,
         type: 2}
       propertyPath: m_IsTrigger
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1344633597577062, guid: 01a63b030b4c76e44b7315f36dc6d8dc, type: 2}
       propertyPath: m_Name

@@ -82,15 +82,17 @@ public class PongeController : PongeElement
         }
     }
 
+    //TODO WorldToScreenPoint might be resource intensive, especially in Update
+
     private void movePlayerToXPixel(PlayerView playerToMove, float xPixel)
     {
         //Debug.Log("Time to MOVE!");
         float playerYPixels = app.view.mainCamera.WorldToScreenPoint(playerToMove.transform.position).y;
         Vector3 newPlayerPixelVector = new Vector3(xPixel, playerYPixels);
-        Debug.Log("Created new Pixel Vector " + newPlayerPixelVector.ToString());
+        //Debug.Log("Created new Pixel Vector " + newPlayerPixelVector.ToString());
         Vector3 newPlayerWorldVector = app.view.mainCamera.ScreenToWorldPoint(newPlayerPixelVector);
         newPlayerWorldVector.z = 0; //So the player doesn't appear BEHIND the camera...
-        Debug.Log("moving Paddle to WorldSpace Vector " + newPlayerWorldVector.ToString());
+        //Debug.Log("moving Paddle to WorldSpace Vector " + newPlayerWorldVector.ToString());
         playerToMove.transform.position = newPlayerWorldVector;
         //Debug.Log("OnPlayerTouch COMPLETE!");
     }

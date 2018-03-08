@@ -77,6 +77,8 @@ public class TestController : MonoBehaviour {
         }
     }
 
+    //TODO WorldToScreenPoint is pretty resource intensive (maybe)
+
     private void MovePlayerToXPixel(TestView playerToMove, float touchXPixels)
     {
         //Debug.Log("Time to MOVE!");
