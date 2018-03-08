@@ -8,16 +8,20 @@ public class PongeController : PongeElement
 
     void Start()
     {
+        //Setting constants
+        app.model.bothTouched = false;
+        app.model.HalfwayYPixel = Screen.height / 2;
+
         //Setting up Models and Views
         setUpModel(ref app.model.player0, true);
         setUpModel(ref app.model.player1, false);
+        app.model.ballSpeed = 5;
 
         //Assign Player Models to Views
         app.view.player0.model = app.model.player0;
         app.view.player1.model = app.model.player1;
 
-        //Setting constants
-        app.model.HalfwayYPixel = Screen.height / 2;
+        
     }
 
     private void setUpModel(ref PlayerModel playerModel, bool isPlayer0)
@@ -28,6 +32,20 @@ public class PongeController : PongeElement
     }
 
     void Update()
+    {
+        handleTouches();
+
+        if (!app.model.bothTouched)
+        {
+            if(app.model.player0.touchId != -1 && app.model.player1.touchId != -1)
+            {
+                app.view.ball.GetComponent<Rigidbody2D>().velocity = Vector2.down * app.model.ballSpeed;
+                app.model.bothTouched = true;
+            }
+        }
+    }
+
+    private void handleTouches()
     {
         for (int i = 0; i < Input.touchCount; i++)
         {
