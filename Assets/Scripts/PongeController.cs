@@ -5,15 +5,12 @@ using UnityEngine;
 
 public class PongeController : PongeElement
 {
-    
 
     void Start()
     {
         //Setting up Models and Views
-        app.model.player0 = new PlayerModel();
-        app.model.player1 = new PlayerModel();
-        app.model.player0.isBottomPlayer0 = true;
-        app.model.player1.isBottomPlayer0 = false;
+        setUpModel(ref app.model.player0, true);
+        setUpModel(ref app.model.player1, false);
 
         //Assign Player Models to Views
         app.view.player0.model = app.model.player0;
@@ -23,77 +20,80 @@ public class PongeController : PongeElement
         app.model.HalfwayYPixel = Screen.height / 2;
     }
 
-    //Player first touches the paddle
-    internal void OnPlayerTouch(bool isPlayer0)
+    private void setUpModel(ref PlayerModel playerModel, bool isPlayer0)
     {
-        //Debug.Log("OnPlayerTouch!!! isPlayer0 is " + isPlayer0);
-        moveTouchedPlayerView(isPlayer0);
+        playerModel = new PlayerModel();
+        playerModel.isBottomPlayer0 = isPlayer0;
+        playerModel.touchId = -1;
     }
 
-    //Player drags finger across
-    internal void OnPlayerDrag(bool isPlayer0)
+    void Update()
     {
-        //Debug.Log("DRAGGIN");
-        moveTouchedPlayerView(isPlayer0);
-        //throw new NotImplementedException();
+        for (int i = 0; i < Input.touchCount; i++)
+        {
+            Touch newTouch = Input.GetTouch(i);
+            int newId = newTouch.fingerId;
+
+            if (newId == app.model.player0.touchId)
+            {
+                if (newTouch.phase == TouchPhase.Ended)
+                {
+                    app.model.player0.touchId = -1;
+                }
+                else
+                {
+                    movePlayerToXPixel(app.view.player0, newTouch.position.x);
+                }
+            }
+            else if (newId == app.model.player1.touchId)
+            {
+                if (newTouch.phase == TouchPhase.Ended)
+                {
+                    app.model.player1.touchId = -1;
+                }
+                else
+                {
+                    movePlayerToXPixel(app.view.player1, newTouch.position.x);
+                }
+            }
+            else //Touch matches neither saved paddle IDs, check if it's a new one
+            {
+                if (newTouch.phase == TouchPhase.Began)
+                {
+                    Debug.Log("NEW TOUCH DETECTED : TouchPosition " + newTouch.position.y);
+
+                    if (newTouch.position.y < app.model.HalfwayYPixel)
+                    {
+                        app.model.player0.touchId = newTouch.fingerId;
+                        movePlayerToXPixel(app.view.player0, newTouch.position.x);
+                        Debug.Log("Touched Player 0");
+                    }
+                    else
+                    {
+                        app.model.player1.touchId = newTouch.fingerId;
+                        movePlayerToXPixel(app.view.player1, newTouch.position.x);
+                        Debug.Log("Touched Player 1");
+                    }
+
+
+                }
+                //Else just ignore the touch
+            }
+        }
     }
 
-    private void moveTouchedPlayerView(bool isPlayer0)
+    private void movePlayerToXPixel(PlayerView playerToMove, float xPixel)
     {
-        Touch touch = findPlayerTouch(isPlayer0);
-
-        float touchXPixels = touch.position.x;
-        PlayerView playerToMove;
-        if (isPlayer0)
-        {
-            playerToMove = app.view.player0;
-        }
-        else
-        {
-            playerToMove = app.view.player1;
-        }
-
         //Debug.Log("Time to MOVE!");
         float playerYPixels = app.view.mainCamera.WorldToScreenPoint(playerToMove.transform.position).y;
-        Vector3 newPlayerPixelVector = new Vector3(touchXPixels, playerYPixels);
+        Vector3 newPlayerPixelVector = new Vector3(xPixel, playerYPixels);
         Debug.Log("Created new Pixel Vector " + newPlayerPixelVector.ToString());
         Vector3 newPlayerWorldVector = app.view.mainCamera.ScreenToWorldPoint(newPlayerPixelVector);
-        newPlayerWorldVector.z = 0; //So it doesn't appear BEHIND the camera...
+        newPlayerWorldVector.z = 0; //So the player doesn't appear BEHIND the camera...
         Debug.Log("moving Paddle to WorldSpace Vector " + newPlayerWorldVector.ToString());
         playerToMove.transform.position = newPlayerWorldVector;
         //Debug.Log("OnPlayerTouch COMPLETE!");
     }
-
-    //Guaranteed to find a Touch
-    private Touch findPlayerTouch(bool isPlayer0)
-    {
-        Debug.Log("Input.touchCount = " + Input.touchCount);
-
-        if (isPlayer0)
-        {
-            foreach (Touch touch in Input.touches)
-            {
-                if(touch.position.y < app.model.HalfwayYPixel)
-                {
-                    return touch;
-                }
-            }
-        } else
-        {
-            foreach (Touch touch in Input.touches)
-            {
-                if (touch.position.y > app.model.HalfwayYPixel)
-                {
-                    return touch;
-                }
-            }
-        }
-        //This should never happen
-        Debug.LogError("findPlayerTouch couldn't find a touch WTF");
-        return new Touch(); //TODO make this a halfway point Touch vector :I
-    }
-
-    
 
     public void OnPlayerBallHit(GameObject collider)
     {
