@@ -16,12 +16,16 @@ public class PongeController : PongeElement
         setUpModel(ref app.model.player0, true);
         setUpModel(ref app.model.player1, false);
         app.model.ballSpeed = 5;
+        app.model.totalBalls = 1;
+        app.model.maxBalls = 50; //TODO adjust this...or remove it?
 
         //Assign Player Models to Views
         app.view.player0.model = app.model.player0;
         app.view.player1.model = app.model.player1;
 
-        
+        //TOD JUST FOR TESTING
+        app.view.ball.GetComponent<Rigidbody2D>().velocity = Vector2.down * app.model.ballSpeed;
+
     }
 
     private void setUpModel(ref PlayerModel playerModel, bool isPlayer0)
@@ -34,7 +38,8 @@ public class PongeController : PongeElement
     void Update()
     {
         handleTouches();
-
+        
+        /* TODO PUT THIS BACK
         if (!app.model.bothTouched)
         {
             if(app.model.player0.touchId != -1 && app.model.player1.touchId != -1)
@@ -43,6 +48,8 @@ public class PongeController : PongeElement
                 app.model.bothTouched = true;
             }
         }
+
+    */
     }
 
     private void handleTouches()
@@ -115,21 +122,28 @@ public class PongeController : PongeElement
         //Debug.Log("OnPlayerTouch COMPLETE!");
     }
 
-    public void OnPlayerBallHit(GameObject collider)
+    public void OnPlayerBallHit(GameObject ball)
     {
         //Create a new ball here
         if (app.model.totalBalls < app.model.maxBalls)
         {
             app.model.totalBalls++;
-            CloneBallWithAngle();
+            CloneBallWithAngle(ball);
             //TODO might need to delay the cloning to prevent more than one from being created on a single collision
         }
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     //Clone the collided ball moving at a slightly different angle
-    private void CloneBallWithAngle()
+    private void CloneBallWithAngle(GameObject ball)
     {
-        throw new NotImplementedException();
+        Vector3 newPosition = ball.transform.position;
+        GameObject newBall = Instantiate(app.model.BallPrefab, newPosition, Quaternion.identity);
+        //TODO Rotate the new ball a little
+        Vector2 originalVelocity = newBall.GetComponent<Rigidbody2D>().velocity;
+        float xShift = 0.1f;
+        Vector2 newDir = new Vector2(originalVelocity.x + xShift, originalVelocity.y).normalized;
+        newBall.GetComponent<Rigidbody2D>().velocity = newDir * app.model.ballSpeed;
+        Debug.Log("NEW BALL!");
     }
 }
