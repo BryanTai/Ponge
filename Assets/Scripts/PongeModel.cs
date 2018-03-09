@@ -11,6 +11,8 @@ public class PongeModel : PongeElement
     public int maxBalls;
     public List<GameObject> balls;
     public float ballSpeed;
+    public Color[] ballColors;
+    public int maxColors;
 
     public PlayerModel player0;
     public PlayerModel player1;

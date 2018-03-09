@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 //Contains all views
 
 public class PongeView : PongeElement
@@ -7,4 +8,7 @@ public class PongeView : PongeElement
     public PlayerView player0;
     public PlayerView player1;
     public Camera mainCamera;
+
+    public Text player0Score;
+    public Text player1Score;
 }
