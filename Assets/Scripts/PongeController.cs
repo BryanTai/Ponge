@@ -29,7 +29,7 @@ public class PongeController : PongeElement
         app.view.player1.model = app.model.player1;
 
         //TODO JUST FOR DESKTOP TESTING
-        //app.view.ball.GetComponent<Rigidbody2D>().velocity = Vector2.down * app.model.ballSpeed;
+        app.view.ball.GetComponent<Rigidbody2D>().velocity = Vector2.down * app.model.ballSpeed;
     }
 
     private void setUpPlayerModel(ref PlayerModel playerModel, bool isPlayer0)
@@ -43,7 +43,7 @@ public class PongeController : PongeElement
     void Update()
     {
         handleTouches();
-        
+        /*
         if (!app.model.bothTouched)
         {
             if(app.model.player0.touchId != -1 && app.model.player1.touchId != -1)
@@ -51,7 +51,7 @@ public class PongeController : PongeElement
                 app.view.ball.GetComponent<Rigidbody2D>().velocity = Vector2.down * app.model.ballSpeed;
                 app.model.bothTouched = true;
             }
-        }
+        }*/
     }
 
     private void handleTouches()
@@ -141,12 +141,14 @@ public class PongeController : PongeElement
     {
         Vector3 newPosition = ball.transform.position;
         GameObject newBall = Instantiate(app.model.BallPrefab, newPosition, Quaternion.identity);
-        Vector2 originalVelocity = newBall.GetComponent<Rigidbody2D>().velocity;
-        float xShift = 0.1f; //TODO adjust this
+        Vector2 originalVelocity = ball.GetComponent<Rigidbody2D>().velocity;
+        float xShift = 0.01f; //TODO adjust this
         Vector2 newDir = new Vector2(originalVelocity.x + xShift, originalVelocity.y).normalized;
         newBall.GetComponent<Rigidbody2D>().velocity = newDir * app.model.ballSpeed;
         newBall.GetComponent<SpriteRenderer>().color = getRandomColor();
         Debug.Log("NEW BALL!");
+        //Debug.Log("New Ball Direction: " + newDir);
+        //Debug.Log("New Ball Velocity: " + newBall.GetComponent<Rigidbody2D>().velocity.ToString());
     }
 
     private Color getRandomColor()
