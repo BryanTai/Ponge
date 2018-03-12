@@ -29,7 +29,12 @@ public class PongeController : PongeElement
         app.view.player1.model = app.model.player1;
 
         //TODO JUST FOR DESKTOP TESTING
-        app.view.ball.GetComponent<Rigidbody2D>().velocity = Vector2.down * app.model.ballSpeed;
+        if (Application.platform == RuntimePlatform.WindowsEditor)
+        {
+            Debug.Log("Running on Editor!");
+            app.view.ball.GetComponent<Rigidbody2D>().velocity = Vector2.down * app.model.ballSpeed;
+            app.model.bothTouched = true;
+        }
     }
 
     private void setUpPlayerModel(ref PlayerModel playerModel, bool isPlayer0)
@@ -43,7 +48,6 @@ public class PongeController : PongeElement
     void Update()
     {
         handleTouches();
-        /*
         if (!app.model.bothTouched)
         {
             if(app.model.player0.touchId != -1 && app.model.player1.touchId != -1)
@@ -51,7 +55,7 @@ public class PongeController : PongeElement
                 app.view.ball.GetComponent<Rigidbody2D>().velocity = Vector2.down * app.model.ballSpeed;
                 app.model.bothTouched = true;
             }
-        }*/
+        }
     }
 
     private void handleTouches()
