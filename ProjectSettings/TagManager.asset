@@ -13,10 +13,10 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - Ball
+  - Player
+  - Wall
+  - Goal
   - 
   - 
   - 

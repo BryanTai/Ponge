@@ -362,6 +362,11 @@ Prefab:
       propertyPath: m_Name
       value: Player 1
       objectReference: {fileID: 0}
+    - target: {fileID: 82574872598443352, guid: 57a43b53f0f4a24478e96d2eaaa74a54,
+        type: 2}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: d3e7459947cf4e64ea03ab7d7202f7f8, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 57a43b53f0f4a24478e96d2eaaa74a54, type: 2}
   m_IsPrefabParent: 0
@@ -505,6 +510,11 @@ Prefab:
       propertyPath: m_Name
       value: Player 0
       objectReference: {fileID: 0}
+    - target: {fileID: 82574872598443352, guid: 57a43b53f0f4a24478e96d2eaaa74a54,
+        type: 2}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: a86bf0cd30192eb4b9a0de7e9b505fc2, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 57a43b53f0f4a24478e96d2eaaa74a54, type: 2}
   m_IsPrefabParent: 0
