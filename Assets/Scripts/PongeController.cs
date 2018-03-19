@@ -2,6 +2,7 @@
 // Controls the app workflow.
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PongeController : PongeElement
 {
@@ -21,8 +22,10 @@ public class PongeController : PongeElement
         app.model.maxBalls = 50; //TODO adjust this...or remove it?
         app.model.ballColors = new Color[] { Color.red, Color.blue, Color.green, Color.yellow, Color.white, Color.gray };
         app.model.maxColors = app.model.ballColors.Length;
-        app.view.player0Score.text = "0";
-        app.view.player1Score.text = "0";
+
+        setUpScoreText(ref app.view.player0Score);
+        setUpScoreText(ref app.view.player1Score);
+
 
         //Assign Player Models to Views
         app.view.player0.model = app.model.player0;
@@ -35,6 +38,14 @@ public class PongeController : PongeElement
             app.view.ball.GetComponent<Rigidbody2D>().velocity = Vector2.down * app.model.ballSpeed;
             app.model.bothTouched = true;
         }
+    }
+
+    private void setUpScoreText(ref Text scoreText)
+    {
+        scoreText.text = "0";
+        RectTransform textRect = scoreText.GetComponent<RectTransform>();
+        textRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height * 0.5f);
+        textRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width * 0.5f);
     }
 
     private void setUpPlayerModel(ref PlayerModel playerModel, bool isPlayer0)
