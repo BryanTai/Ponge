@@ -208,8 +208,6 @@ MonoBehaviour:
   BallPrefab: {fileID: 1238324623045218, guid: 6fc3056ec1961aa45becd27cf2e4067d, type: 2}
   totalBalls: 0
   maxBalls: 0
-  balls: []
-  ballSpeed: 0
   ballColors:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 0, g: 0, b: 1, a: 1}
@@ -313,7 +311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb050f45eedcfa14a89908c28a58500e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ball: {fileID: 1100344980}
+  firstBall: {fileID: 1100344980}
   player0: {fileID: 945098348}
   player1: {fileID: 675607938}
   mainCamera: {fileID: 940516787}

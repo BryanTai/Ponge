@@ -3,6 +3,8 @@
 //Borrowed from https://noobtuts.com/unity/2d-pong-game
 public class BallView : PongeElement
 {
+    public BallModel model;
+
     void OnCollisionEnter2D(Collision2D col)
     {
         //TODO store name values in Model
@@ -32,12 +34,13 @@ public class BallView : PongeElement
 
         Vector2 dir = new Vector2(x, yVector).normalized;
         //Debug.Log("Old Velocity: " + GetComponent<Rigidbody2D>().velocity.ToString());
-        GetComponent<Rigidbody2D>().velocity = dir * app.model.ballSpeed;
+        GetComponent<Rigidbody2D>().velocity = dir * model.speed;
 
         //At this point, the ball should be moving in the other direction already
-
-        app.controller.OnPlayerBallHit(this.gameObject);
-        //TODO what info should be sent to Controller?
+        bool lastHitPlayer0 = yVector > 0;
+        model.lastHitPlayer0 = lastHitPlayer0;
+        //TODO DOUBLE CHECK THE FLOW
+        app.controller.OnPlayerBallHit(this.gameObject, lastHitPlayer0);
         //Debug.Log("New Velocity: " + GetComponent<Rigidbody2D>().velocity.ToString());
     }
 

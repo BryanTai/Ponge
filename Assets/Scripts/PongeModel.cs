@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 //Contains all the data related to the app
 public class PongeModel : PongeElement
@@ -9,10 +8,6 @@ public class PongeModel : PongeElement
 
     public int totalBalls;
     public int maxBalls;
-    public List<GameObject> balls;
-    public float ballSpeed;
-    public Color[] ballColors;
-    public int maxColors;
 
     public PlayerModel player0;
     public PlayerModel player1;

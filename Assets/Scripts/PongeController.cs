@@ -17,26 +17,23 @@ public class PongeController : PongeElement
         //Setting up Models and Views
         setUpPlayerModel(ref app.model.player0, true);
         setUpPlayerModel(ref app.model.player1, false);
-        app.model.ballSpeed = 5;
         app.model.totalBalls = 1;
         app.model.maxBalls = 50; //TODO adjust this...or remove it?
-        app.model.ballColors = new Color[] { Color.red, Color.blue, Color.green, Color.yellow, Color.white, Color.gray };
-        app.model.maxColors = app.model.ballColors.Length;
 
         setUpScoreText(ref app.view.player0Score);
         setUpScoreText(ref app.view.player1Score);
-
 
         //Assign Player Models to Views
         app.view.player0.model = app.model.player0;
         app.view.player1.model = app.model.player1;
 
+        app.view.firstBall.model = createBallModelFromBallType(BallType.Regular);
+
         //TODO JUST FOR DESKTOP TESTING
         if (Application.platform == RuntimePlatform.WindowsEditor)
         {
             Debug.Log("Running on Editor!");
-            app.view.ball.GetComponent<Rigidbody2D>().velocity = Vector2.down * app.model.ballSpeed;
-            app.model.bothTouched = true;
+            startTheGame();
         }
     }
 
@@ -59,14 +56,20 @@ public class PongeController : PongeElement
     void Update()
     {
         handleTouches();
+
         if (!app.model.bothTouched)
         {
             if(app.model.player0.touchId != -1 && app.model.player1.touchId != -1)
             {
-                app.view.ball.GetComponent<Rigidbody2D>().velocity = Vector2.down * app.model.ballSpeed;
-                app.model.bothTouched = true;
+                startTheGame();
             }
         }
+    }
+
+    private void startTheGame()
+    {
+        app.view.firstBall.GetComponent<Rigidbody2D>().velocity = Vector2.down * BallModel.defaultSpeed;
+        app.model.bothTouched = true;
     }
 
     private void handleTouches()
@@ -128,47 +131,44 @@ public class PongeController : PongeElement
 
     private void movePlayerToXPixel(PlayerView playerToMove, float xPixel)
     {
-        //Debug.Log("Time to MOVE!");
         float playerYPixels = app.view.mainCamera.WorldToScreenPoint(playerToMove.transform.position).y;
         Vector3 newPlayerPixelVector = new Vector3(xPixel, playerYPixels);
-        //Debug.Log("Created new Pixel Vector " + newPlayerPixelVector.ToString());
         Vector3 newPlayerWorldVector = app.view.mainCamera.ScreenToWorldPoint(newPlayerPixelVector);
         newPlayerWorldVector.z = 0; //So the player doesn't appear BEHIND the camera...
-        //Debug.Log("moving Paddle to WorldSpace Vector " + newPlayerWorldVector.ToString());
         playerToMove.transform.position = newPlayerWorldVector;
-        //Debug.Log("OnPlayerTouch COMPLETE!");
     }
 
-    public void OnPlayerBallHit(GameObject ball)
+    public void OnPlayerBallHit(GameObject ball, bool lastHitPlayer0)
     {
         //Create a new ball here
         if (app.model.totalBalls < app.model.maxBalls)
         {
+            //TODO delay the cloning to prevent more than one from being created on a single collision
             app.model.totalBalls++;
-            CloneBallWithAngle(ball);
-            //TODO might need to delay the cloning to prevent more than one from being created on a single collision
-            //TODO However, an explosion of balls is fairly entertaining...
+            SpawnNewBall(ball, lastHitPlayer0);
+            //TODO create an explosion of balls on a special hit
         }
     }
 
     //Clone the collided ball moving at a slightly different angle
-    private void CloneBallWithAngle(GameObject ball)
+    private void SpawnNewBall(GameObject originalBall, bool lastHitPlayer0)
     {
-        Vector3 newPosition = ball.transform.position;
+        Vector3 newPosition = originalBall.transform.position;
         GameObject newBall = Instantiate(app.model.BallPrefab, newPosition, Quaternion.identity);
-        Vector2 originalVelocity = ball.GetComponent<Rigidbody2D>().velocity;
+        BallModel newModel = createBallModelFromBallType(BallType.Regular); //TODO pick a random one
+        newModel.lastHitPlayer0 = lastHitPlayer0;
+        newBall.GetComponent<BallView>().model = newModel;
+
+        Vector2 originalVelocity = originalBall.GetComponent<Rigidbody2D>().velocity;
+
         float xShift = 0.01f; //TODO adjust this
         Vector2 newDir = new Vector2(originalVelocity.x + xShift, originalVelocity.y).normalized;
-        newBall.GetComponent<Rigidbody2D>().velocity = newDir * app.model.ballSpeed;
-        newBall.GetComponent<SpriteRenderer>().color = getRandomColor();
+        newBall.GetComponent<Rigidbody2D>().velocity = newDir * newModel.speed;
+        newBall.GetComponent<SpriteRenderer>().color = newModel.color;
         Debug.Log("NEW BALL!");
         //Debug.Log("New Ball Direction: " + newDir);
         //Debug.Log("New Ball Velocity: " + newBall.GetComponent<Rigidbody2D>().velocity.ToString());
-    }
-
-    private Color getRandomColor()
-    {
-        return app.model.ballColors[rnd.Next(app.model.maxColors)];
+        
     }
 
     public void OnBallScored(GameObject ball, bool scoredOnPlayer0)
@@ -187,5 +187,23 @@ public class PongeController : PongeElement
         }
         app.model.totalBalls--;
         Destroy(ball);
+    }
+
+    private BallModel createBallModelFromBallType(BallType ballType)
+    {
+        switch (ballType)
+        {
+            case BallType.Regular:
+                return new BallModel(BallModel.defaultSpeed, Color.white, BallModel.defaultSize, ballType);
+            case BallType.Fast:
+                return new BallModel(BallModel.defaultSpeed * 2, Color.red, BallModel.defaultSize, ballType);
+            case BallType.Large:
+                return new BallModel(BallModel.defaultSpeed * 0.8f, Color.blue, BallModel.defaultSize * 5, ballType);
+            case BallType.Spread:
+                return new BallModel(BallModel.defaultSpeed, Color.green, BallModel.defaultSize, ballType);
+            default:
+                Debug.Log("Invalid BallType, defaulting to regular");
+                return new BallModel(BallModel.defaultSpeed, Color.white, BallModel.defaultSize, ballType);
+        }
     }
 }
