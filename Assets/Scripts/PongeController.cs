@@ -1,6 +1,7 @@
 ﻿
 // Controls the app workflow.
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,10 +10,12 @@ public class PongeController : PongeElement
     System.Random rnd;
     void Start()
     {
-        //Setting constants
+        //Setting constants and global variables
         app.model.bothTouched = false;
         app.model.HalfwayYPixel = Screen.height / 2;
         rnd = new System.Random();
+        app.model.isGameOver = false;
+        app.model.maxScore = 100; //TODO Adjust this
 
         //Setting up Models and Views
         setUpPlayerModel(ref app.model.player0, true);
@@ -56,16 +59,28 @@ public class PongeController : PongeElement
 
     void Update()
     {
-        handleTouches();
-
-        if (!app.model.bothTouched)
+        if (!app.model.isGameOver)
         {
-            if(app.model.player0.touchId != -1 && app.model.player1.touchId != -1)
+            handleTouches();
+
+            if (!app.model.bothTouched)
             {
-                startTheGame();
+                if (app.model.player0.touchId != -1 && app.model.player1.touchId != -1)
+                {
+                    startTheGame();
+                }
+            }
+
+            if (app.model.totalBalls <= 0)
+            {
+                //TODO Spawn new ball
+                Debug.Log("Out of balls!");
             }
         }
     }
+
+    
+
 
     private void startTheGame()
     {
@@ -164,7 +179,7 @@ public class PongeController : PongeElement
 
         //Adjust the new BallView
         Vector2 originalVelocity = originalBall.GetComponent<Rigidbody2D>().velocity;
-        float xShift = 0.01f; //TODO adjust this
+        float xShift = 1f; //TODO adjust this
         Vector2 newDir = new Vector2(originalVelocity.x + xShift, originalVelocity.y).normalized;
         newBall.GetComponent<Rigidbody2D>().velocity = newDir * newModel.speed;
         newBall.GetComponent<SpriteRenderer>().color = newModel.color;
@@ -173,7 +188,7 @@ public class PongeController : PongeElement
             newBall.transform.localScale += new Vector3(0.3f, 0.3f, 0);
         }
         
-        Debug.Log("NEW BALL!");
+        //Debug.Log("NEW BALL!");
         //Debug.Log("New Ball Direction: " + newDir);
         //Debug.Log("New Ball Velocity: " + newBall.GetComponent<Rigidbody2D>().velocity.ToString());
         
@@ -181,20 +196,65 @@ public class PongeController : PongeElement
 
     public void OnBallScored(GameObject ball, bool scoredOnPlayer0)
     {
+        if (app.model.isGameOver)
+        {
+            return;
+        }
+
         if (scoredOnPlayer0)
         {
             app.model.player0.score++;
             app.view.player0Score.text = app.model.player0.score.ToString();
-            app.view.player0Score.color = ball.GetComponent<SpriteRenderer>().color;
+            //app.view.player0Score.color = ball.GetComponent<SpriteRenderer>().color;
         }
         else
         {
             app.model.player1.score++;
             app.view.player1Score.text = app.model.player1.score.ToString();
-            app.view.player1Score.color = ball.GetComponent<SpriteRenderer>().color;
+            //app.view.player1Score.color = ball.GetComponent<SpriteRenderer>().color;
         }
         app.model.totalBalls--;
         Destroy(ball);
+
+        if(app.model.player0.score >= app.model.maxScore 
+        || app.model.player1.score >= app.model.maxScore)
+        {
+            handleGameOver(app.model.player0.score >= app.model.player1.score);
+        }
+    }
+
+    private void handleGameOver(bool player0won)
+    {
+        Debug.Log("GAME OVER!");
+        app.model.isGameOver = true;
+        app.view.GameOverTextPlayer0.enabled = player0won;
+        app.view.GameOverTextPlayer1.enabled = !player0won;
+        Text textToFadeIn = player0won ? app.view.GameOverTextPlayer0 : app.view.GameOverTextPlayer1;
+
+        StartCoroutine(FadeInPanel(0.5f, 3));
+        StartCoroutine(FadeInText(textToFadeIn, 1, 3));
+    }
+
+    IEnumerator FadeInPanel(float aValue, float aTime)
+    {
+        Image panelImage = app.view.GameOverPanel.GetComponent<Image>();
+        float alpha = panelImage.color.a;
+        for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / aTime)
+        {
+            Color newColor = new Color(1, 1, 1, Mathf.Lerp(alpha, aValue, t));
+            panelImage.color = newColor;
+            yield return null;
+        }
+    }
+    IEnumerator FadeInText(Text text, float aValue, float aTime)
+    {
+        float alpha = text.color.a;
+        for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / aTime)
+        {
+            Color newColor = new Color(1, 1, 1, Mathf.Lerp(alpha, aValue, t));
+            text.color = newColor;
+            yield return null;
+        }
     }
 
     //TODO move hard coded values to BallModel
@@ -205,11 +265,11 @@ public class PongeController : PongeElement
             case BallType.Regular:
                 return new BallModel(BallModel.defaultSpeed, Color.white, BallModel.defaultSize, ballType);
             case BallType.Fast:
-                return new BallModel(BallModel.defaultSpeed * 2, Color.red, BallModel.defaultSize, ballType);
+                return new BallModel(BallModel.defaultSpeed * 1.5f, Color.green, BallModel.defaultSize * 0.8f, ballType);
             case BallType.Large:
-                return new BallModel(BallModel.defaultSpeed * 0.8f, Color.yellow, BallModel.defaultSize * 5, ballType);
+                return new BallModel(BallModel.defaultSpeed * 0.8f, Color.red, BallModel.defaultSize * 1.2f, ballType);
             case BallType.Spread:
-                return new BallModel(BallModel.defaultSpeed, Color.green, BallModel.defaultSize, ballType);
+                return new BallModel(BallModel.defaultSpeed, Color.yellow, BallModel.defaultSize, ballType);
             default:
                 Debug.Log("Invalid BallType, defaulting to regular");
                 return new BallModel(BallModel.defaultSpeed, Color.white, BallModel.defaultSize, ballType);

@@ -12,7 +12,7 @@ public enum BallType
 
 public class BallModel {
     public const float defaultSpeed = 4; //TODO adjust this
-    public const float defaultSize = 0.1f;
+    public const float defaultSize = 0.3f;
 
     public float speed;
     public Color color; //TODO might not need to store all this data :I

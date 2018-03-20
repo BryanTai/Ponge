@@ -27,7 +27,6 @@ public class BallView : PongeElement
 
     }
 
-    //TODO maybe combine with the function in PongeController?
     void handlePlayerCollision(Collision2D col, bool collidedWithPlayer0)
     {
         if (model.lastHitPlayer0 == collidedWithPlayer0)

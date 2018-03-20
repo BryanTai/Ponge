@@ -5,6 +5,8 @@ public class PongeModel : PongeElement
 {
     public int HalfwayYPixel;
     public GameObject BallPrefab;
+    public bool isGameOver;
+    public int maxScore;
 
     public int totalBalls;
     public int maxBalls;

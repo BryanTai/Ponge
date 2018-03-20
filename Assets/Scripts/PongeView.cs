@@ -4,11 +4,15 @@ using UnityEngine.UI;
 
 public class PongeView : PongeElement
 {
-    public BallView firstBall; //TODO going to need a collection of these
+    public BallView firstBall;
     public PlayerView player0;
     public PlayerView player1;
     public Camera mainCamera;
 
+    //Canvas elements
     public Text player0Score;
     public Text player1Score;
+    public GameObject GameOverPanel;
+    public Text GameOverTextPlayer0;
+    public Text GameOverTextPlayer1;
 }
