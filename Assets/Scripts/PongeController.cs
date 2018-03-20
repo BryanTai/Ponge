@@ -23,11 +23,12 @@ public class PongeController : PongeElement
         setUpScoreText(ref app.view.player0Score);
         setUpScoreText(ref app.view.player1Score);
 
-        //Assign Player Models to Views
+        //Assign Models to Views
         app.view.player0.model = app.model.player0;
         app.view.player1.model = app.model.player1;
 
         app.view.firstBall.model = createBallModelFromBallType(BallType.Regular);
+        app.view.firstBall.model.lastHitPlayer0 = false;
 
         //TODO JUST FOR DESKTOP TESTING
         if (Application.platform == RuntimePlatform.WindowsEditor)
@@ -138,30 +139,31 @@ public class PongeController : PongeElement
         playerToMove.transform.position = newPlayerWorldVector;
     }
 
-    public void OnPlayerBallHit(GameObject ball, bool lastHitPlayer0)
+    public void OnPlayerBallHit(GameObject originalBall)
     {
         //Create a new ball here
         if (app.model.totalBalls < app.model.maxBalls)
         {
-            //TODO delay the cloning to prevent more than one from being created on a single collision
             app.model.totalBalls++;
-            SpawnNewBall(ball, lastHitPlayer0);
+            SpawnNewBall(originalBall);
             //TODO create an explosion of balls on a special hit
         }
     }
 
     //Clone the collided ball moving at a slightly different angle
-    private void SpawnNewBall(GameObject originalBall, bool lastHitPlayer0)
+    private void SpawnNewBall(GameObject originalBall)
     {
+        //Create a new BallModel
         Vector3 newPosition = originalBall.transform.position;
         GameObject newBall = Instantiate(app.model.BallPrefab, newPosition, Quaternion.identity);
         BallType nextBallType = getRandomBallType();
-        BallModel newModel = createBallModelFromBallType(nextBallType); //TODO pick a random one
-        newModel.lastHitPlayer0 = lastHitPlayer0;
+        BallModel newModel = createBallModelFromBallType(nextBallType);
+        BallModel originalModel = originalBall.GetComponent<BallView>().model;
+        newModel.lastHitPlayer0 = originalModel.lastHitPlayer0;
         newBall.GetComponent<BallView>().model = newModel;
-        //TODO ADJUST SIZE FOR LARGE BALL
-        Vector2 originalVelocity = originalBall.GetComponent<Rigidbody2D>().velocity;
 
+        //Adjust the new BallView
+        Vector2 originalVelocity = originalBall.GetComponent<Rigidbody2D>().velocity;
         float xShift = 0.01f; //TODO adjust this
         Vector2 newDir = new Vector2(originalVelocity.x + xShift, originalVelocity.y).normalized;
         newBall.GetComponent<Rigidbody2D>().velocity = newDir * newModel.speed;

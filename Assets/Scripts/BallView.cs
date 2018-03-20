@@ -10,11 +10,11 @@ public class BallView : PongeElement
         //TODO store name values in Model
         if (col.gameObject.name == "Player 0")
         {
-            handlePlayerCollision(col, 1);
+            handlePlayerCollision(col, true);
         }
         else if (col.gameObject.name == "Player 1")
         {
-            handlePlayerCollision(col, -1);
+            handlePlayerCollision(col, false);
         }
         else if (col.gameObject.name == "Goal 0")
         {
@@ -28,20 +28,24 @@ public class BallView : PongeElement
     }
 
     //TODO maybe combine with the function in PongeController?
-    void handlePlayerCollision(Collision2D col, int yVector)
+    void handlePlayerCollision(Collision2D col, bool collidedWithPlayer0)
     {
+        if (model.lastHitPlayer0 == collidedWithPlayer0)
+        {
+            return;
+        }
+
         float x = hitFactor(transform.position, col.transform.position,
             col.collider.bounds.size.x);
+        float yVector = collidedWithPlayer0 ? 1 : -1;
 
         Vector2 dir = new Vector2(x, yVector).normalized;
         //Debug.Log("Old Velocity: " + GetComponent<Rigidbody2D>().velocity.ToString());
         GetComponent<Rigidbody2D>().velocity = dir * model.speed;
 
         //At this point, the ball should be moving in the other direction already
-        bool lastHitPlayer0 = yVector > 0;
-        model.lastHitPlayer0 = lastHitPlayer0;
-        //TODO DOUBLE CHECK THE FLOW
-        app.controller.OnPlayerBallHit(this.gameObject, lastHitPlayer0);
+        model.lastHitPlayer0 = collidedWithPlayer0;
+        app.controller.OnPlayerBallHit(this.gameObject);
         //Debug.Log("New Velocity: " + GetComponent<Rigidbody2D>().velocity.ToString());
     }
 
