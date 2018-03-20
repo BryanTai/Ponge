@@ -27,6 +27,7 @@ public class BallView : PongeElement
 
     }
 
+    //TODO maybe combine with the function in PongeController?
     void handlePlayerCollision(Collision2D col, int yVector)
     {
         float x = hitFactor(transform.position, col.transform.position,

@@ -11,7 +11,7 @@ public enum BallType
 }
 
 public class BallModel {
-    public const float defaultSpeed = 5;
+    public const float defaultSpeed = 4; //TODO adjust this
     public const float defaultSize = 0.1f;
 
     public float speed;

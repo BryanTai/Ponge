@@ -155,16 +155,22 @@ public class PongeController : PongeElement
     {
         Vector3 newPosition = originalBall.transform.position;
         GameObject newBall = Instantiate(app.model.BallPrefab, newPosition, Quaternion.identity);
-        BallModel newModel = createBallModelFromBallType(BallType.Regular); //TODO pick a random one
+        BallType nextBallType = getRandomBallType();
+        BallModel newModel = createBallModelFromBallType(nextBallType); //TODO pick a random one
         newModel.lastHitPlayer0 = lastHitPlayer0;
         newBall.GetComponent<BallView>().model = newModel;
-
+        //TODO ADJUST SIZE FOR LARGE BALL
         Vector2 originalVelocity = originalBall.GetComponent<Rigidbody2D>().velocity;
 
         float xShift = 0.01f; //TODO adjust this
         Vector2 newDir = new Vector2(originalVelocity.x + xShift, originalVelocity.y).normalized;
         newBall.GetComponent<Rigidbody2D>().velocity = newDir * newModel.speed;
         newBall.GetComponent<SpriteRenderer>().color = newModel.color;
+        if(nextBallType == BallType.Large)
+        {
+            newBall.transform.localScale += new Vector3(0.3f, 0.3f, 0);
+        }
+        
         Debug.Log("NEW BALL!");
         //Debug.Log("New Ball Direction: " + newDir);
         //Debug.Log("New Ball Velocity: " + newBall.GetComponent<Rigidbody2D>().velocity.ToString());
@@ -189,6 +195,7 @@ public class PongeController : PongeElement
         Destroy(ball);
     }
 
+    //TODO move hard coded values to BallModel
     private BallModel createBallModelFromBallType(BallType ballType)
     {
         switch (ballType)
@@ -198,12 +205,18 @@ public class PongeController : PongeElement
             case BallType.Fast:
                 return new BallModel(BallModel.defaultSpeed * 2, Color.red, BallModel.defaultSize, ballType);
             case BallType.Large:
-                return new BallModel(BallModel.defaultSpeed * 0.8f, Color.blue, BallModel.defaultSize * 5, ballType);
+                return new BallModel(BallModel.defaultSpeed * 0.8f, Color.yellow, BallModel.defaultSize * 5, ballType);
             case BallType.Spread:
                 return new BallModel(BallModel.defaultSpeed, Color.green, BallModel.defaultSize, ballType);
             default:
                 Debug.Log("Invalid BallType, defaulting to regular");
                 return new BallModel(BallModel.defaultSpeed, Color.white, BallModel.defaultSize, ballType);
         }
+    }
+
+    private BallType getRandomBallType()
+    {
+        Array values = Enum.GetValues(typeof(BallType));
+        return (BallType)values.GetValue(rnd.Next(values.Length));
     }
 }
