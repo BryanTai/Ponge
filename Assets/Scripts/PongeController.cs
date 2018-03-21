@@ -73,8 +73,8 @@ public class PongeController : PongeElement
 
             if (app.model.totalBalls <= 0)
             {
-                //TODO Spawn new ball
                 Debug.Log("Out of balls!");
+                SpawnNewBall();
             }
         }
     }
@@ -159,11 +159,28 @@ public class PongeController : PongeElement
         //Create a new ball here
         if (app.model.totalBalls < app.model.maxBalls)
         {
-            app.model.totalBalls++;
+            
             SpawnNewBall(originalBall);
             //TODO create an explosion of balls on a special hit
         }
     }
+
+    private void SpawnNewBall()
+    {
+        Vector3 originPosition = new Vector3();
+        GameObject newBall = Instantiate(app.model.BallPrefab, originPosition, Quaternion.identity);
+        BallModel newModel = createBallModelFromBallType(BallType.Regular);
+
+        bool isPlayer0Winning = app.model.player0.score > app.model.player1.score;
+        newModel.lastHitPlayer0 = !isPlayer0Winning;
+        newBall.GetComponent<BallView>().model = newModel;
+
+        Vector2 startingDirection = isPlayer0Winning ? Vector2.down : Vector2.up;
+        newBall.GetComponent<Rigidbody2D>().velocity = startingDirection * newModel.speed;
+
+        app.model.totalBalls++;
+    }
+
 
     //Clone the collided ball moving at a slightly different angle
     private void SpawnNewBall(GameObject originalBall)
@@ -187,11 +204,12 @@ public class PongeController : PongeElement
         {
             newBall.transform.localScale += new Vector3(0.3f, 0.3f, 0);
         }
-        
+
+        app.model.totalBalls++;
         //Debug.Log("NEW BALL!");
         //Debug.Log("New Ball Direction: " + newDir);
         //Debug.Log("New Ball Velocity: " + newBall.GetComponent<Rigidbody2D>().velocity.ToString());
-        
+
     }
 
     public void OnBallScored(GameObject ball, bool scoredOnPlayer0)
